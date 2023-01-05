@@ -7,8 +7,8 @@ A and B respectively, to calculate the exchange rate of the tokens.
 On each swap, the product `K` must be constant, and the amounts are calculated using the
 following formulas:
 
-`amount_out_a = (balance_a * amount_in_b) / (balance_b + amount_in_b)`
-`amount_out_b = (balance_b * amount_in_a) / (balance_a + amount_in_a)`
+$amount\_out\_a = (balance\_a * amount\_in\_b) / (balance\_b + amount\_in\_b)$
+$amount\_out\_b = (balance\_b * amount\_in\_a) / (balance\_a + amount\_in\_a)$
 
 ## Quick Start
 
@@ -16,16 +16,23 @@ This app was initialized with [create-near-app]
 
 If you haven't installed dependencies during setup:
 
+```bash
     npm install
+```
 
 
 Build and deploy your contract to TestNet with a temporary dev account:
 
+```bash
     npm run deploy
+```
 
 Test the contract (this will run both the unit tests and the integration tests):
 
+```bash
     npm test
+```
+
 
 
 ## Exploring The Code
@@ -314,15 +321,16 @@ When you're ready to make it permanent, here's how:
 ##### Step 0: Install near-cli (optional)
 
 [near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
-
+```bash
     npm install --global near-cli
+```
 
 Or, if you'd rather use the locally-installed version, you can prefix all `near` commands with `npx`
 
 Ensure that it's installed with `near --version` (or `npx near --version`)
 
 
-##### Step 1: Create an account for the contract
+##### Step 1: Create an account for the contracts
 
 Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `near-blank-project.your-name.testnet`:
 
@@ -334,12 +342,14 @@ Each account on NEAR can have at most one contract deployed to it. If you've alr
 
       near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
 
-##### Step 2: deploy the contract
+##### Step 2: deploy the contracts
 
 Use the CLI to deploy the contract to TestNet with your account ID.
 Replace `PATH_TO_WASM_FILE` with the `wasm` that was generated in `contract` build directory.
 
     near deploy --accountId near-blank-project.YOUR-NAME.testnet --wasmFile PATH_TO_WASM_FILE
+
+##### Note:
 
 If you plan on playing around with the AMM, you will also have to deploy test tokens or use ones that
 have already been deployed.
@@ -348,44 +358,60 @@ For example:
 
 1. Deploy the contracts:
 
+```bash
     near deploy --accountId amm.YOUR-NAME.testnet --wasmFile ./contract/target/wasm32-unknown-unknown/amm.wasm
-    near deploy --accountId token_a.YOUR-NAME.testnet --wasmFile ./contract/target/wasm32-unknown-unknown/test_token.wasm
-    near deploy --accountId token_b.YOUR-NAME.testnet --wasmFile ./contract/target/wasm32-unknown-unknown/test_token.wasm
+    near deploy --accountId token_a.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/test_token.wasm
+    near deploy --accountId token_b.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/test_token.wasm
+```
+
+If it can't find `./test_token/target/wasm32-unknown-unknown/test_token.wasm`, run:
+
+```bash
+    cd test-token && sh build.sh && cd ..
+```
+Then try again. Similarly for `amm.wasm`.
 
 2. Initialise the test tokens:
 
+```bash
     near call token_a.YOUR-NAME.testnet new '{"name": "Token A", "decimals": 8}' --account-id YOUR-NAME.testnet --gas=300000000000000
     near call token_b.YOUR-NAME.testnet new '{"name": "Token B", "decimals": 16}' --account-id YOUR-NAME.testnet --gas=300000000000000
-
+```
 3. Initialise the AMM:
 
+```bash
     near call amm.YOUR-NAME.testnet new '{"owner": "YOUR-NAME.testnet", "token_a": "token_a.YOUR-NAME.testnet", "token_b": "token_b.YOUR-NAME.testnet"}' --account-id YOUR-NAME.testnet --gas=300000000000000
-
+```
 4. Register the AMM with the token storages:
 
+```bash
     near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet"}' --accountId YOUR-NAME.testnet --amount 0.00125
     near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet"}' --accountId YOUR-NAME.testnet --amount 0.00125
-
+```
 5. Mint test tokens to the owner address:
 
+```bash
     near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
     near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
-
+```
 6. Deposit tokens in the AMM:
 
+```bash
     near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "10000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
     near call token_b.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "100000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
-
+```
 7. View balances / ratio:
 
+```bash
     near view amm.YOUR-NAME.testnet get_balance '{"token": "'token_a.YOUR-NAME.testnet'"}'  --account-id YOUR-NAME.testnet
     near view amm.YOUR-NAME.testnet get_balance '{"token": "'token_b.YOUR-NAME.testnet'"}'  --account-id YOUR-NAME.testnet
     near view amm.YOUR-NAME.testnet get_ratio ''  --account-id YOUR-NAME.testnet
-
+```
 8. Perform a swap with a normal user (already registered with the test tokens' storage):
 
+```bash
     near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "10000000000000000", "msg": ""}' --accountId test_user.YOUR-NAME.testnet --depositYocto 1
-
+```
 
 ## Troubleshooting
 
