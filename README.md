@@ -7,8 +7,8 @@ A and B respectively, to calculate the exchange rate of the tokens.
 On each swap, the product `K` must be constant, and the amounts are calculated using the
 following formulas:
 
-$amount\_out\_a = (balance\_a * amount\_in\_b) / (balance\_b + amount\_in\_b)$
-$amount\_out\_b = (balance\_b * amount\_in\_a) / (balance\_a + amount\_in\_a)$
+$amountOut_a = (balance_a * amountIn\_b) / (balance_b + amountIn\_b)$
+$amountOut_b = (balance_b * amountIn\_a) / (balance_a + amountIn\_a)$
 
 ## Quick Start
 
