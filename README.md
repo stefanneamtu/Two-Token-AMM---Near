@@ -40,7 +40,7 @@ Test the contract (this will run both the unit tests and the integration tests):
 1. The AMM smart-contract code lives in the `/contract` folder. See the README there for
    more info.
 2. For testing purposes, a test fungible token exists in `/test_token`. It has been adapted
-   from [Ref](https://github.com/ref-finance/ref-contracts/tree/main/test-token).
+   from [Ref](https://github.com/ref-finance/ref-contracts/blob/main/test-token/src/lib.rs).
 3. Integration tests exist in `/integration-tests`. The AMM uses cross-contract calls that
    can't be tested with unit tests.
 
@@ -417,10 +417,7 @@ Then try again. Similarly for `amm.wasm`.
 
 On Windows, if you're seeing an error containing `EPERM` it may be related to spaces in your path. Please see [this issue](https://github.com/zkat/npx/issues/209) for more details.
 
-  [create-near-app](https://github.com/near/create-near-app)
-  [Node.js](https://nodejs.org/en/download/package-manager/)
-  [jest](https://jestjs.io/)
-  [NEAR accounts](https://docs.near.org/concepts/basics/account)
-  [NEAR Wallet](https://wallet.testnet.near.org/)
-  [near-cli](https://github.com/near/near-cli)
-  [gh-pages](https://github.com/tschaub/gh-pages)
+1. [create-near-app](https://github.com/near/create-near-app)
+2. [NEAR accounts](https://docs.near.org/concepts/basics/account)
+3. [NEAR Wallet](https://wallet.testnet.near.org/)
+4. [near-cli](https://github.com/near/near-cli)
