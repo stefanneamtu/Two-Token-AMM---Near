@@ -1,0 +1,7 @@
+.DS_Store
+contract/Cargo.lock
+contract/target
+test_token/Cargo.lock
+test_token/target
+integration-tests/Cargo.lock
+package-lock.json
