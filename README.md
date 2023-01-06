@@ -12,7 +12,7 @@ $amountOut_b = (balance_b * amountIn\_a) / (balance_a + amountIn\_a)$
 
 ## Quick Start
 
-This app was initialized with [create-near-app]
+This app was initialized with [create-near-app](https://github.com/near/create-near-app)
 
 If you haven't installed dependencies during setup:
 
@@ -313,14 +313,14 @@ The scenarios tested are as follows:
 
 ## Deploy
 
-Every smart contract in NEAR has its [own associated account][NEAR accounts].
+Every smart contract in NEAR has its [own associated account](https://docs.near.org/concepts/basics/account).
 When you run `npm run deploy`, your smart contract gets deployed to the live NEAR TestNet with a temporary dev account.
 When you're ready to make it permanent, here's how:
 
 
 #### Step 0: Install near-cli (optional)
 
-[near-cli] is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
+[near-cli](https://github.com/near/near-cli) is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
 ```bash
     npm install --global near-cli
 ```
@@ -332,22 +332,28 @@ Ensure that it's installed with `near --version` (or `npx near --version`)
 
 #### Step 1: Create an account for the contracts
 
-Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet], here's how to create `near-blank-project.your-name.testnet`:
+Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet](https://wallet.testnet.near.org/), here's how to create `near-blank-project.your-name.testnet`:
 
 1. Authorize NEAR CLI, following the commands it gives you:
 
+```bash
       near login
+```
 
 2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
 
+```bash
       near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+```
 
 #### Step 2: deploy the contracts
 
 Use the CLI to deploy the contract to TestNet with your account ID.
 Replace `PATH_TO_WASM_FILE` with the `wasm` that was generated in `contract` build directory.
 
+```bash
     near deploy --accountId near-blank-project.YOUR-NAME.testnet --wasmFile PATH_TO_WASM_FILE
+```
 
 ### Interacting with AMM through CLI:
 
@@ -356,15 +362,24 @@ have already been deployed.
 
 For example:
 
+0. Create accounts:
+
+```bash
+near create-account amm.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+near create-account token_a.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+near create-account token_b.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+near create-account test_user.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+```
+
 1. Deploy the contracts:
 
 ```bash
-near deploy --accountId amm.YOUR-NAME.testnet --wasmFile ./contract/target/wasm32-unknown-unknown/amm.wasm
-near deploy --accountId token_a.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/test_token.wasm
-near deploy --accountId token_b.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/test_token.wasm
+near deploy --accountId amm.YOUR-NAME.testnet --wasmFile ./contract/target/wasm32-unknown-unknown/release/amm.wasm
+near deploy --accountId token_a.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/release/test_token.wasm
+near deploy --accountId token_b.YOUR-NAME.testnet --wasmFile ./test_token/target/wasm32-unknown-unknown/release/test_token.wasm
 ```
 
-If it can't find `./test_token/target/wasm32-unknown-unknown/test_token.wasm`, run:
+If it can't find `./test_token/target/wasm32-unknown-unknown/release/test_token.wasm`, run:
 
 ```bash
 cd test-token && sh build.sh && cd ..
@@ -391,33 +406,43 @@ near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NA
 5. Mint test tokens to the owner address:
 
 ```bash
-near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
-near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
+near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
+near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
 ```
 6. Deposit tokens in the AMM:
 
 ```bash
-near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "10000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
-near call token_b.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "100000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
+near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "amm.YOUR-NAME.testnet", "amount": "10000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
+near call token_b.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "amm.YOUR-NAME.testnet", "amount": "100000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
 ```
 7. View balances / ratio:
 
 ```bash
-near view amm.YOUR-NAME.testnet get_balance '{"token": "'token_a.YOUR-NAME.testnet'"}'  --account-id YOUR-NAME.testnet
-near view amm.YOUR-NAME.testnet get_balance '{"token": "'token_b.YOUR-NAME.testnet'"}'  --account-id YOUR-NAME.testnet
+near view amm.YOUR-NAME.testnet get_balance '{"token": "token_a.YOUR-NAME.testnet"}'  --account-id YOUR-NAME.testnet
+near view amm.YOUR-NAME.testnet get_balance '{"token": "token_b.YOUR-NAME.testnet"}'  --account-id YOUR-NAME.testnet
 near view amm.YOUR-NAME.testnet get_ratio ''  --account-id YOUR-NAME.testnet
 ```
-8. Perform a swap with a normal user (already registered with the test tokens' storage):
+
+8. Mint tokens for the test user (the minting function also registers the user with the storage):
 
 ```bash
-near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "'amm.YOUR-NAME.testnet'", "amount": "10000000000000000", "msg": ""}' --accountId test_user.YOUR-NAME.testnet --depositYocto 1
+near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "test_user.YOUR-NAME.testnet", "amount": "10000000000000000"}' --accountId test_user.YOUR-NAME.testnet --amount 0.00125
 ```
+
+9. Register the test user with the other token's storage:
+
+```bash
+near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "test_user.YOUR-NAME.testnet"}' --accountId test_user.YOUR-NAME.testnet --amount 0.00125
+```
+
+10. Perform a swap with the test user:
+
+```bash
+near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "amm.YOUR-NAME.testnet", "amount": "10000000000000000", "msg": ""}' --accountId test_user.YOUR-NAME.testnet --depositYocto 1
+```
+
+There are more scenarios covered in the integration tests.
 
 ## Troubleshooting
 
 On Windows, if you're seeing an error containing `EPERM` it may be related to spaces in your path. Please see [this issue](https://github.com/zkat/npx/issues/209) for more details.
-
-1. [create-near-app](https://github.com/near/create-near-app)
-2. [NEAR accounts](https://docs.near.org/concepts/basics/account)
-3. [NEAR Wallet](https://wallet.testnet.near.org/)
-4. [near-cli](https://github.com/near/near-cli)
