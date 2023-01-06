@@ -1,6 +1,6 @@
 # Constant Product AMM With Two Tokens
 
-The user user can swap a specific number of tokens A for a number of tokens B, or vice-versa.
+The user can swap a specific number of tokens A for a number of tokens B, or vice-versa.
 The AMM makes use of a constant product `K = A * B`, where A and B are the balances of tokens
 A and B respectively, to calculate the exchange rate of the tokens.
 
@@ -64,7 +64,7 @@ The `metadata` field is an Option to easily check whether the metadata has been 
 
 #### Metadata Structure
 
-The `Metadata` struct stores the address of the token name, the ticker symbol and the decimals.
+The `Metadata` struct stores the address of the token name, the ticker symbol, and the decimals.
 The definition is as follows:
 
 ```rust
@@ -156,7 +156,7 @@ Then the metadata will be received and stored in the callback function shown bel
 ```
 
 In order for the owner to deposit tokens in the AMM and modify the ratio, the AMM contract has been
-made an `FungibleTokenReceiver` and is implementing the `ft_on_transfer` function which gets called
+made a `FungibleTokenReceiver` and is implementing the `ft_on_transfer` function which gets called
 by the deposited token's smart contract whenever a transfer is done using `ft_transfer_call`.
 
 However, if a user that is not the owner deposits tokens using `ft_transfer_call`, then the action will
@@ -198,8 +198,8 @@ The function must return the amount of tokens that have to be reimbursed to the 
 will be handled by the token's contract.
 
 If the owner deposits tokens, then the `ownder_deposit` function is called and it updates the token balance,
-without performing a swap. This will also modify the ratio. Since all the tokens are used, there is no
-reimbursement that has to be done so the value returned is 0.
+without performing a swap. This will also modify the ratio. Since all the tokens are used, no
+reimbursement has to be done so the value returned is 0.
 
 ```rust
     fn owner_deposit(&mut self, token_in: usize, amount: Balance) {
@@ -249,7 +249,7 @@ swapped tokens and the AMM's balances must be updated.
 However, the transfer cross-contract call can fail, for example, if the user is unregistered
 with the swapped token's storage. If this happens, the user's funds will be lost in the AMM and
 the AMM won't be able to transfer the swapped tokens. Therefore, the callback `swap_callback`
-must handle this case and inform the calling contract to refund the transfered tokens:
+must handle this case and inform the calling contract to refund the transferred tokens:
 
 ```rust
     #[private]
@@ -274,7 +274,7 @@ must handle this case and inform the calling contract to refund the transfered t
     }
 ```
 
-Refering to tokens by index provides the possibility to refer to tokens by index which helps
+Referring to tokens by index provides the possibility to refer to tokens by index which helps
 reduce code duplication (for example, swapping from token A to token B and vice-versa can simply
 be done by switching the order of the provided indices, without having to write separate functions
 for each type of swap).
@@ -290,7 +290,7 @@ The AMM smart contract also implements getter functions for:
 The testing is done using a combination of unit tests and integration tests. Because of the
 cross-contract calls, unit tests can't thoroughly test the functionality and security of the smart
 contract and slower, more robust integration tests have been employed. Both kinds of tests can be
-ran using `npm test`.
+run using `npm test`.
 
 The unit tests have been written in the same file as the AMM smart contract, in `/contract/src/lib.rs`
 and the integration tests exist in `/integration-tests/src/tests.rs`.
@@ -305,7 +305,7 @@ The scenarios tested are as follows:
 3. swapping with/for 0 tokens fails
 4. calculations do not overflow (thanks to U256)
 5. balances and ratio gets updated correctly
-6. `ft_transfer` calls do not affect the ratio / balances (it can only be done
+6. `ft_transfer` calls do not affect the ratio/balances (it can only be done
    using `ft_on_transfer`)
 7. failed swaps reimburse the deposited tokens
 8. swaps work as expected
@@ -320,7 +320,7 @@ When you're ready to make it permanent, here's how:
 
 #### Step 0: Install near-cli (optional)
 
-[near-cli](https://github.com/near/near-cli) is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics you may want to install it globally:
+[near-cli](https://github.com/near/near-cli) is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics, you may want to install it globally:
 ```bash
     npm install --global near-cli
 ```
@@ -334,7 +334,7 @@ Ensure that it's installed with `near --version` (or `npx near --version`)
 
 Each account on NEAR can have at most one contract deployed to it. If you've already created an account such as `your-name.testnet`, you can deploy your contract to `near-blank-project.your-name.testnet`. Assuming you've already created an account on [NEAR Wallet](https://wallet.testnet.near.org/), here's how to create `near-blank-project.your-name.testnet`:
 
-1. Authorize NEAR CLI, following the commands it gives you:
+1. Authorize NEAR CLI, by following the commands it gives you:
 
 ```bash
       near login
@@ -386,13 +386,13 @@ cd test-token && sh build.sh && cd ..
 ```
 Then try again. Similarly for `amm.wasm`.
 
-2. Initialise the test tokens:
+2. Initialize the test tokens:
 
 ```bash
 near call token_a.YOUR-NAME.testnet new '{"name": "Token A", "decimals": 8}' --account-id YOUR-NAME.testnet --gas=300000000000000
 near call token_b.YOUR-NAME.testnet new '{"name": "Token B", "decimals": 16}' --account-id YOUR-NAME.testnet --gas=300000000000000
 ```
-3. Initialise the AMM:
+3. Initialize the AMM:
 
 ```bash
 near call amm.YOUR-NAME.testnet new '{"owner": "YOUR-NAME.testnet", "token_a": "token_a.YOUR-NAME.testnet", "token_b": "token_b.YOUR-NAME.testnet"}' --account-id YOUR-NAME.testnet --gas=300000000000000
@@ -415,7 +415,7 @@ near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "YOUR-NAME.t
 near call token_a.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "amm.YOUR-NAME.testnet", "amount": "10000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
 near call token_b.YOUR-NAME.testnet ft_transfer_call '{"receiver_id": "amm.YOUR-NAME.testnet", "amount": "100000000000000000", "msg": ""}' --accountId YOUR-NAME.testnet --depositYocto 1
 ```
-7. View balances / ratio:
+7. View balances/ratio:
 
 ```bash
 near view amm.YOUR-NAME.testnet get_balance '{"token": "token_a.YOUR-NAME.testnet"}'  --account-id YOUR-NAME.testnet
