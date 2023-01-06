@@ -30,10 +30,10 @@ If you haven't installed dependencies during setup:
 ```
 
 
-Build and deploy your contract to TestNet with a temporary dev account:
+Build the contracts:
 
 ```bash
-    npm run deploy
+    npm run build 
 ```
 
 Test the contract (this will run both the unit tests and the integration tests):
