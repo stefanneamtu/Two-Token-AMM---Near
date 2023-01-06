@@ -10,6 +10,15 @@ following formulas:
 $amountOut_a = (balance_a * amountIn\_b) / (balance_b + amountIn\_b)$
 $amountOut_b = (balance_b * amountIn\_a) / (balance_a + amountIn\_a)$
 
+## Exploring The Code
+
+1. The AMM smart-contract code lives in the `/contract` folder. See the README there for
+   more info.
+2. For testing purposes, a test fungible token exists in `/test_token`. It has been adapted
+   from [Ref](https://github.com/ref-finance/ref-contracts/blob/main/test-token/src/lib.rs).
+3. Integration tests exist in `/integration-tests`. The AMM uses cross-contract calls that
+   can't be tested with unit tests.
+
 ## Quick Start
 
 This app was initialized with [create-near-app](https://github.com/near/create-near-app)
@@ -32,17 +41,6 @@ Test the contract (this will run both the unit tests and the integration tests):
 ```bash
     npm test
 ```
-
-
-
-## Exploring The Code
-
-1. The AMM smart-contract code lives in the `/contract` folder. See the README there for
-   more info.
-2. For testing purposes, a test fungible token exists in `/test_token`. It has been adapted
-   from [Ref](https://github.com/ref-finance/ref-contracts/blob/main/test-token/src/lib.rs).
-3. Integration tests exist in `/integration-tests`. The AMM uses cross-contract calls that
-   can't be tested with unit tests.
 
 ## AMM Design & Implementation
 
@@ -322,7 +320,7 @@ When you're ready to make it permanent, here's how:
 
 [near-cli](https://github.com/near/near-cli) is a command line interface (CLI) for interacting with the NEAR blockchain. It was installed to the local `node_modules` folder when you ran `npm install`, but for best ergonomics, you may want to install it globally:
 ```bash
-    npm install --global near-cli
+npm install --global near-cli
 ```
 
 Or, if you'd rather use the locally-installed version, you can prefix all `near` commands with `npx`
@@ -337,13 +335,13 @@ Each account on NEAR can have at most one contract deployed to it. If you've alr
 1. Authorize NEAR CLI, by following the commands it gives you:
 
 ```bash
-      near login
+near login
 ```
 
 2. Create a subaccount (replace `YOUR-NAME` below with your actual account name):
 
 ```bash
-      near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
+near create-account near-blank-project.YOUR-NAME.testnet --masterAccount YOUR-NAME.testnet
 ```
 
 #### Step 2: deploy the contracts
@@ -352,7 +350,7 @@ Use the CLI to deploy the contract to TestNet with your account ID.
 Replace `PATH_TO_WASM_FILE` with the `wasm` that was generated in `contract` build directory.
 
 ```bash
-    near deploy --accountId near-blank-project.YOUR-NAME.testnet --wasmFile PATH_TO_WASM_FILE
+near deploy --accountId near-blank-project.YOUR-NAME.testnet --wasmFile PATH_TO_WASM_FILE
 ```
 
 ### Interacting with AMM through CLI:
@@ -406,8 +404,8 @@ near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "amm.YOUR-NA
 5. Mint test tokens to the owner address:
 
 ```bash
-near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
-near call token_b.YOUR-NAME.testnet storage_deposit '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
+near call token_a.YOUR-NAME.testnet mint '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
+near call token_b.YOUR-NAME.testnet mint '{"account_id": "YOUR-NAME.testnet", "amount": "1000000000000000000"}' --accountId YOUR-NAME.testnet --amount 0.00125
 ```
 6. Deposit tokens in the AMM:
 
@@ -426,7 +424,7 @@ near view amm.YOUR-NAME.testnet get_ratio ''  --account-id YOUR-NAME.testnet
 8. Mint tokens for the test user (the minting function also registers the user with the storage):
 
 ```bash
-near call token_a.YOUR-NAME.testnet storage_deposit '{"account_id": "test_user.YOUR-NAME.testnet", "amount": "10000000000000000"}' --accountId test_user.YOUR-NAME.testnet --amount 0.00125
+near call token_a.YOUR-NAME.testnet mint '{"account_id": "test_user.YOUR-NAME.testnet", "amount": "10000000000000000"}' --accountId test_user.YOUR-NAME.testnet --amount 0.00125
 ```
 
 9. Register the test user with the other token's storage:
